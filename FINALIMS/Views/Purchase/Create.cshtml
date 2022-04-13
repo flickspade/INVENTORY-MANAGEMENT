@@ -1,0 +1,714 @@
+﻿@model  FINALIMS.Models.Extended.ProductViewModel
+
+@{
+    ViewBag.Title = "Purchase Order";
+    //Layout = null;
+}
+
+<!DOCTYPE html>
+@if (ViewBag.Success)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width" />
+
+    <title>Create</title>
+    <title>Edit</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+
+
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-offset-5"><h2>Purchase <b>Order</b></h2></div>
+                    @*<div class="col-sm-4">
+                            <button type="button" id="addNewRow" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
+                        </div>*@
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h5><b>Supplier Name</b></h5>
+                        @Html.DropDownList("supplier", ViewBag.GetSuppliersList as SelectList, "--Select Supplier--", htmlAttributes: new { @id = "SupDDL", @class = "form-control" })
+                        <font size="1">Or <a id="OpenNewSuppForm" href="~/Supplier/Supplier">Add New Supplier</a></font>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <h5><b>Purchase ID</b></h5>
+                        @Html.EditorFor(model => model.PurchaseID, new { htmlAttributes = new { @class = "form-control", @id = "ProDDL", @Value = ViewBag.SuggestedNewPurchaseId, @readonly = "readonly" } })
+                    </div>
+
+                    @*<input type="text" id="search" />*@
+                </div>
+
+            </div>
+
+
+            <table id="selectedProducts" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:5%;">#</th>
+                        <th style="display:none;">Product</th>
+                        <th style="width:25%;">Name</th>
+                        <th>Total Price</th>
+                        <th>Quantity</th>
+                        <th>Brand</th>
+                        <th>Size</th>
+                        <th>Item Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="SNo0">1</td>
+                        <td style="display:none"><input type="hidden" autocomplete="off" class="form-control" name="ProductID" id="Proid"></td>
+                        <td> <input type="text" class="form-control" name="Product_Type" id="newField" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"> </td>
+                        <td><input type="text" autocomplete="off" class="form-control" name="CostPrice" id="TtlPrice"></td>
+                        <td> <input type="text" autocomplete="off" class="form-control" name="Quantity" id="Quantity"> </td>
+                        <td> <input type="text" autocomplete="off" class="form-control" name="Brand" id="Brand">  </td>
+                        <td><input type="text" readonly autocomplete="off" class="form-control" name="Size" id="Size"></td>
+                        <td><input type="text" readonly class="form-control" name="Total" id="Total"></td>
+                        <td>
+                            <button class="btn btn-danger rounded-0" id="delete0">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            @*BUTTON FOR ADDING NEW ROW*@
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <button type="button" id="addNewRow" class="btn btn-info add-new"><i class="fa fa-plus"></i> New Row</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:inline" id="dvCalculations">
+                <table id="grandTotal" class="table borderless">
+                    <thead>
+                        <tr>
+                            <th>
+
+                            </th>
+                            <th>
+
+                            </th>
+                            <th style="width:25%;">
+
+                            </th>
+                            <th style="width:20%;">
+
+                            </th>
+                            <th>
+
+                            </th>
+                            <th>
+
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="OrderTotal">
+                            <td><input type="text" readonly="" class="form-control classBorder0" name="OrderTotal" id="no1" value="Order Total" tabindex="-1"></td>
+                            <td><input type="text" readonly="" class="form-control classBorder0" name="PurchaseOrder.BillAmount" id="OT1" value="0" tabindex="-1"></td>
+                        </tr>
+
+                        <tr id="Discount">
+
+                            <td><input type="text" class="form-control classBorder0" name="dc3" id="discount" value="OrderDiscount" tabindex="-1"></td>
+                            <td><input type="number" autocomplete="off" class="form-control" name="PurchaseOrder.Discount" id="distxt" value="0"></td>
+
+
+                        </tr>
+                        <tr>
+                            <td><b><input type="text" readonly="" class="form-control classBorder0" name="st3" id="SubTotal" value="Sub Total" tabindex="-1"></b></td>
+                            <td><b><input type="text" readonly="" class="form-control classBorder0" name="subtotal" id="subtotal" value="0" tabindex="-1"></b></td>
+
+                        </tr>
+                        <tr>
+
+                            <td><input type="text" readonly="" class="form-control classBorder0" name="pb3" id="pb3" value="Prev. Balance" tabindex="-1"></td>
+                            <td><input readonly="" type="text" autocomplete="off" class="form-control" name="PurchaseOrder.PrevBalance" id="PreviousBalance" value="0" tabindex="-1"></td>
+
+
+                        <tr>
+
+                            <td><b><input type="text" readonly="" class="form-control classBorder0" name="tt3" id="tt3" value="Final. Total" tabindex="-1"></b></td>
+                            <td><b><input type="text" readonly="" class="form-control classBorder0" name="total" id="total" value="0" tabindex="-1"></b></td>
+
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+
+
+
+                <div class="table-title">
+
+                    <div class="row">
+
+                        <div class="col-sm-3">
+
+                        </div>
+                        <div class="col-sm-7">
+
+                            <select class="form-control" name="PurchaseOrder.PaymentMethod" id="PurchaseOrder.PaymentMethod" data-toggle="tooltip" data-placement="top" title="Select Payment method">
+                                <option value="Cash" selected>Cash</option>
+                                <option value="Online">Online</option>
+                                <option value="Cheque">Cheque</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-3">
+
+                        </div>
+                        <div class="col-sm-7">
+                            <input type="text" autocomplete="off" class="form-control" name="PurchaseOrder.PaymentDetail" id="PurchaseOrder.PaymentDetail" value="" placeholder="Cheque No./Online payment No./etc..." data-toggle="tooltip" data-placement="top" title="Enter any details you want">
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="row">
+
+
+                        <div class="col-sm-3">
+
+                        </div>
+                        <div class="col-sm-7">
+                            <textarea name="PurchaseOrder.Remarks" rows="1" cols="100" class="form-control" placeholder="These remarks will print on bill" data-toggle="tooltip" data-placement="top" title="These remarks will print on bill"></textarea>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-3">
+
+                        </div>
+                        <div class="col-sm-7">
+                            <textarea name="PurchaseOrder.Remarks2" rows="1" cols="100" class="form-control" placeholder="These remarks will not print on bill" data-toggle="tooltip" data-placement="top" title="These remarks will not print on bill"></textarea>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <button type="submit" id="CreatePO" class="btn btn-info add-new">Save & Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
+
+@section scripts
+{
+    <script src="~/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#newField").prop('disabled', true);
+
+        $("#newField").autocomplete({
+            source: '@Url.Action("GetProductByJquery")',
+            minLength: 1
+        });
+        $("#SupDDL").change(function () {
+            if ($("#SupDDL").val() === "") {
+                $("#newField").prop('disabled', true);
+            } else {
+                //$("#SupDDL").change(function () {
+                $("#newField").prop('disabled', false);
+                //    var al = this.value;
+                //    alert(al);
+                //});
+
+            }
+        });
+
+        // Start counting from the third row
+        var counter = 2;
+        //adding new row on addbtn click
+        $("#addNewRow").on("click", function (event) {
+            event.preventDefault();
+            var newRow = $("<tr>");
+            var cols = '';
+            cols += '<td id="SNo' + counter + '">' + counter + '</td>';
+            cols += '<td style="display:none"><input type="text" autocomplete="off" class="form-control" name="ProductID" id="Proid' + counter + '"> </td>';
+            cols += '<td> <input type="text" class="newClass form-control" name="Product_Type" id="newField1" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>';
+            cols += '<td> <input type="text" autocomplete="off" class="form-control" name="CostPrice" id="TtlPrice'+counter+'"> </td>';
+            cols += '<td><input type="text" autocomplete="off" class="form-control" name="Quantity" id="Quantity'+counter + '"> </td>';
+            cols += '<td> <input type="text" autocomplete="off" class="form-control" name="Brand" id="Brand'+counter+'"> </td>';
+            cols += '<td> <input type="text" readonly="" class="form-control" name="Size" id="Size'+counter+'" tabindex="-1"> </td>';
+            cols += '<td> <input type="text" readonly="" class="form-control" name="Total" id="Total'+counter+'" tabindex="-1"> </td>';
+            cols += '<td><button class="btn btn-danger" id ="delete0"><i class="fa fa-trash"></i></button</td>';
+
+            newRow.append(cols);
+            $("#selectedProducts").append(newRow);
+            counter++;
+            //autocomplete drop down for the dynamically added text boxes
+
+            $("#newField1", newRow).autocomplete({
+                source: '@Url.Action("GetProductByJquery")',
+                minLength: 1,
+                select: function (event, ui) {
+
+                    var proValue = ui.item.value;
+                    /*alert(proValue);*/
+                    $(this).closest("td").on("change", function () {
+                        var supID = $('#SupDDL').val();
+                        var prodName = proValue;
+                        if (!supID) {
+                            alert("CHOOSE SUPPLIER ID");
+                            $("#newField1").val('');
+                        } else {
+                            $.ajax({
+                                url: "GetAllInfoByNameID",
+                                method: "POST",
+                                dataType: "json",
+                                data: { SupName: prodName, ProId: supID },
+                                success: function (response) {
+                                    if (response.AllData) {
+                                        fillPrice(response.AllData);
+                                    }
+                                    function fillPrice(AllData) {
+                                        var Size = '';
+                                        var brand = '';
+                                        salesPrice = '';
+                                        for (var i = 0; i < AllData.length; i++) {
+                                            Size = AllData[i].size;
+                                            brand = AllData[i].Brand;
+                                            salesPrice = AllData[i].price;
+                                            ProductID = AllData[i].prodID;
+                                        }
+                                        counter1 = counter - 1;
+                                        $('#Quantity'+counter1).val("1");
+                                        $('#Size'+counter1).val(Size)
+                                        $('#Brand'+counter1).val(brand);
+                                        $('#TtlPrice'+counter1).val(salesPrice);
+                                        $('#Total' + counter1).val(salesPrice);
+                                        $('#Proid' + counter1).val(ProductID);
+
+                                        $("#Quantity"+counter1).on("change", function () {
+                                            totalPrice = $('#TtlPrice'+counter1).val();
+                                            numberofPiece = $('#Quantity'+counter1).val();
+                                            OrderTotal = totalPrice * numberofPiece
+                                            $('#Total' + counter1).val(OrderTotal);
+                                        });
+
+                                    }
+
+                                    /*alert(prevTotal);*/
+                                    var ttl = parseInt($("#Total" + counter1).val());
+                                    var prevTotal = parseInt($("#OT1").val());
+                                   /* alert(prevTotal);*/
+                                    var temp = prevTotal;
+                                    var newVal = ttl + temp;
+                                    $("#OT1").val(newVal);
+                                    $("#subtotal").val(newVal);
+                                    $("#total").val(newVal);
+                                    alert(newVal);
+
+
+                                   /* temp= newVal;*/
+                                    /*var newttl = prevTotal + ttl;*/
+                                   /* alert(ttl);*/
+                                },
+                                error: function (err) {
+                                    alert("The Product Selected doesn't belong to supplier. Chose a different Product.")
+                                }
+                            })
+
+
+                        }
+                    });
+
+                }
+
+            });
+
+        });
+        // Remove row when delete btn is clicked
+        $("#selectedProducts").on("click", "#delete0", function (event) {
+            //var val = $(this).closest('#TtlPrice' /*+ counter1*/).val();
+            //alert(val);
+            $(this).closest("tr").remove();
+            $("#OT1").val(0);
+            counter -= 1
+        });
+
+
+        //data fetching for the first row
+        $("#newField").change (function () {
+
+            //FOR PRICES QUANTITY ETC
+            $('#Quantity').val("1");
+
+            //FOR BRAND SIZE AND OTHER INFO
+            var supID = $('#SupDDL').val();
+            var prodName = $('#newField').val();
+            $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
+                if (data.AllData) {
+                    fillData(data.AllData);
+                    $("#newField").trigger("updatecomplete");
+                }
+                function fillData(AllData) {
+
+                    var Size = '';
+                    var brand = '';
+                    var total = '';
+                    for (var i = 0; i < AllData.length; i++) {
+
+                        Size = AllData[i].size;
+                        brand = AllData[i].Brand
+                        total = AllData[i].price;
+                        ProductID = AllData[i].prodID;
+                    }
+                    $('#Size').val(Size);
+                    $('#Brand').val(brand);
+                    $('#TtlPrice').val(total);
+                    $('#Total').val(total);
+                    $('#Proid').val(ProductID);
+
+                    $("#Quantity").on("change", function () {
+                        totalPrice = $('#TtlPrice').val();
+                        numberofPiece = $('#Quantity').val();
+                        OrderTotal = totalPrice * numberofPiece
+
+                        $('#Total').val(OrderTotal);
+                    });
+
+                }
+
+            });
+
+
+        });
+
+        $("#newField").on("updatecomplete", function () {
+            // this will fire when #newField change event has finished updating the options.
+            var newTtl = $('#Total').val();
+            $('#OT1').val(newTtl);
+            $('#subtotal').val(newTtl);
+            $("#total").val(newTtl);
+            $('#distxt').change(function () {
+
+                var prevvalue = $('#OT1').val();
+                var discamt = $('#distxt').val();
+                var newval = prevvalue - discamt;
+                $('#subtotal').val(newval);
+                var prevbal = $("#PreviousBalance").val();
+                varfinaltotal = newval - prevbal;
+                $("#total").val(varfinaltotal);
+            });
+        });
+
+        //building JSON array:
+        $("body").on("click", "#CreatePO", function () {
+            //needing data type { "supplierID":"1",PurchaseID:"1","Total":"1","Discount":"smth","SubTotal":"1", "ListofProductViewModel":[
+            //{Transaction_no:""}, {"PurcahseID":"1"} ....
+            var supID = $('#SupDDL').val();
+            var proID = $('#ProDDL').val();
+            var ottl = $('#OT1').val();
+            var disc = $('#distxt').val();
+            var subTtl = $('#subtotal').val();
+            var modelData = [];
+
+            jQuery('#selectedProducts tr:not(:first)').each(function (i) {
+                var tb = jQuery(this);
+                var data = {};
+                tb.find('input').each(function () {
+                    data[this.name] = this.value;
+                    data["PurchaseID"] = proID;
+                });
+
+                /*var listofProdcutViewModel = {};*/
+
+                modelData.push(data);
+            });
+            var modelData = {
+                SupplierID: supID,
+                PurchaseID: proID,
+                Total: ottl,
+                Discount: disc,
+                SubTotal: subTtl,
+                ListofProductViewModel: modelData
+
+            }
+            console.log(modelData);
+            /*console.log(modelData);*/
+            /*var listofProductViewModel = [];*/
+
+            //var newData = {};
+            //newData['SupplierID'] = supID;
+            //newData['PurchaseID'] = proID;
+            //newData['Total'] = ottl;
+            //newData['Discount'] = disc;
+            //newData['SubTotal'] = subTtl;
+
+
+            //modelData.push(newData)
+
+            /*console.log(modelData);*/
+           /* console.log(JSON.stringify(modelData)) ;*/
+            //jQuery('#selectedProducts tr:not(:first)').each(function (i) {
+            //    var tb = jQuery(this);
+            //    var data = {};
+            //    var newData = {};
+            //    tb.find('input').each(function () {
+            //        data[this.name] = this.value;
+            //        newData[this.name] = this.value;
+            //    });
+            //    //for purchase info page
+            //    data['Supplier'] = supID;
+            //    data['PurchaseID'] = proID;
+
+            //    //for invoice page
+            //    newData['SupplierID'] = supID;
+            //    newData['PurchaseID'] = proID;
+            //    newData['Total'] = ottl;
+            //    newData['Discount'] = disc;
+            //    newData['SubTotal'] = subTtl;
+            //    newData['ListofProductViewModel'] = [newData[this.name] = this.value]
+
+            //    listofProductViewModel.push(data);
+            //    listofAllProducts.push(newData);
+
+            //    //how the array is made
+
+            //});
+
+            //adding up all the order total to generate Order's Total.
+            Array.prototype.sum = function (prop) {
+                var total = 0
+                for (var i = 0, _len = this.length; i < _len; i++) {
+                    total += parseInt(this[i][prop])
+                }
+                return total
+            }
+           /* console.log(listofProductViewModel.sum("Total"))*/
+            /*TotalOrderPrice = listofProductViewModel.sum("Total");*/
+           /* Send the JSON array to Controller using AJAX.*/
+            $.ajax({
+                type: "POST",
+                url: "/Purchase/Create",
+                data: modelData,
+                success: function (modelData) {
+                    var proid = modelData.PurchaseID;
+
+                    var InvoiceurlAPI = '@Url.Content("~/")' + "Purchase/Invoice?billno="
+                    window.location.href = InvoiceurlAPI + proid;
+
+                },
+                error: function (err) {
+                    alert("Data Fetch ERROR.")
+
+                }
+            });
+        });
+    });
+    </script>
+}
+
+
+@*<script src="~/plugins/jquery/jquery.js"></script>*@
+@*<script type="text/javascript">
+
+        $(function () {
+            $("#ProDDL").prop('disabled', true);
+            $("#SupDDL").change(function () {
+                $('#Quantity').val("1");
+
+                var suppID = this.value
+                $("#ProDDL").prop('disabled', false);
+                $.get("@Url.Action("/GetProductsBySupplierID")", { id: suppID }, function (data) {
+
+                    if (data.products) {
+                        fillProducts(data.products);
+                        $('select option')
+                            .filter(function () {
+                                return !this.value || $.trim(this.value).length == 0 || $.trim(this.text).length == 0;
+                            })
+                            .remove();
+                    }
+                });
+                function fillProducts(products) {
+                    $('#ProDDL').empty();
+                    var options = '';
+                    for (var i = 0; i < products.length; i++) {
+                        options += '<option value="' + products[i].ID + '">' + products[i].name + '<option>';
+                    }
+                    $('#ProDDL').append(options);
+
+                    $("#ProDDL").bind('DOMSubtreeModified', function () {
+                         var supID = $('#SupDDL').val();
+                        var prodName = $('#ProDDL :selected').text();
+
+                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
+                        if (data.amount) {
+                            fillPrice(data.amount);
+
+                        }
+                        function fillPrice(amount) {
+                            var total = '';
+                            for (var i = 0; i < amount.length; i++) {
+                                total = amount[i].price;
+                            }
+                            $('#TtlPrice').val(total);
+                            $("#Total").val(total);
+
+                            $("#Quantity").on("change", function () {
+                                totalPrice =$('#TtlPrice').val();
+                                numberofPiece = $('#Quantity').val();
+                                OrderTotal = totalPrice * numberofPiece
+
+                                $('#Total').val(OrderTotal);
+                            });
+                        }
+                        });
+
+                        var supID = $('#SupDDL').val();
+                var prodName = $('#ProDDL :selected').text();
+                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
+                    if (data.AllData) {
+                        fillData(data.AllData);
+                    }
+                    function fillData(AllData) {
+                        var productType = '';
+                        var Size = '';
+                        var brand = '';
+                        for (var i = 0; i < AllData.length; i++) {
+                            productType = AllData[i].prodType;
+                            Size = AllData[i].size;
+                            brand = AllData[i].Brand
+
+                        }
+                        $('#ProType').val(productType);
+                        $('#Size').val(Size);
+                        $('#Brand').val(brand);
+                    }
+
+
+                });
+
+                    });
+                    $("#ProDDL").change(function () {
+                        $('#Quantity').val("1");
+                        var supID = $('#SupDDL').val();
+                        var prodName = $('#ProDDL :selected').text();
+
+                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
+                            if (data.amount) {
+                                /*alert(data.amount);*/
+                                fillPrice(data.amount);
+
+                            }
+                            function fillPrice(amount) {
+                                var total = '';
+                                for (var i = 0; i < amount.length; i++) {
+                                    total = amount[i].price;
+                                }
+                                $('#TtlPrice').val(total);
+                                $("#Total").val(total);
+
+                                $("#Quantity").on("change", function () {
+                                    totalPrice = $('#TtlPrice').val();
+                                    numberofPiece = $('#Quantity').val();
+                                    OrderTotal = totalPrice * numberofPiece
+
+                                    $('#Total').val(OrderTotal);
+                                });
+                            }
+
+                        });
+
+                    });
+
+                }
+            });
+            $("#ProDDL").change(function () {
+                var supID = $('#SupDDL').val();
+                var prodName = $('#ProDDL :selected').text();
+                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
+                    if (data.AllData) {
+                        fillData(data.AllData);
+                    }
+                    function fillData(AllData) {
+                        var productType = '';
+                        var Size = '';
+                        var brand = '';
+                        for (var i = 0; i < AllData.length; i++) {
+                            productType = AllData[i].prodType;
+                            Size = AllData[i].size;
+                            brand = AllData[i].Brand
+
+                        }
+                        $('#ProType').val(productType);
+                        $('#Size').val(Size);
+                        $('#Brand').val(brand);
+                    }
+
+
+                });
+
+
+            });
+
+
+
+        });
+    </script>*@
+
+
+<!--$.ajax({
+                       type: "POST",
+                       url: "/Purchase/Invoice",
+                       data: JSON.stringify(listofAllProducts),
+                       contentType: "application/json; charset=utf-8",
+                       success: function (listobj) {-->
+@*var Invurl = '@Url.Content("~/")' + "Purchase/Invoice?ListofData=";*@
+<!--//window.location + "?ListofData=" + encodeURIComponent(JSON.stringify(listobj));
+/*window.location.href = Invurl + encodeURIComponent(JSON.stringify(listobj));*/-->
+@*window.location.href = '@Url.Content("~/Purchase/Invoice",listobj)';*@
+
+<!--},
+    error: function (err) {
+        alert("Why ")
+    }
+});-->

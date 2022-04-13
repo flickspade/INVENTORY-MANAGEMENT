@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <link rel="stylesheet" href="~/CSS/HomeStyle.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+</head>
+<body>
+
+    <section>
+        <input type="checkbox" id="check">
+        <header>
+            <div class="imglogo">
+                <img src="~/Images/Logo.png" alt="Logo" />
+            </div>
+            <h2><a href="~/Home/Index" class="logo">N.S Traders</a></h2>
+            <div class="navigation">
+                <a href="~/Home/Index">HOME</a>
+                <a href="#">ABOUT</a>
+                <a href="#">INFO</a>
+                <a href="#">SERVICES</a>
+                <a href="#">CONTACT</a>
+            </div>
+            <label for="check">
+                <i class="fas fa-bars menu-btn"></i>
+                <i class="fas fa-times close-btn"></i>
+            </label>
+        </header>
+        <div class="content">
+            <div class="info">
+                <h2>Welcome! <br><span>Customers,Satisfaction<br />Success.</span></h2>
+                <p>Welcome User To N.S Traders.<br />This is the Landing Page of the Website.<br /> To Use The the Inventory Management System Portal,<br />Please Click the Button Below. </p>
+                <a href="~/User/Login" class="info-btn">TO IMS</a>
+            </div>
+        </div>
+        <div class="media-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+    </section>
+
+</body>
+</html>

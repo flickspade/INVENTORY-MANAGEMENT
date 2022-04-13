@@ -1,0 +1,58 @@
+﻿@model IEnumerable<FINALIMS.Models.supplier>
+
+@{
+    ViewBag.Title = "SupplierList";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>SupplierList</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <table class="table table-hover">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Contact_number)
+            </th>
+            <th></th>
+        </tr>
+
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Contact_number)
+                </td>
+                <td>
+                    @*@Html.ActionLink("Edit", "Edit", new { id = item.SupplierID }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.SupplierID }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.SupplierID })*@
+                    <a href="@Url.Action("Edit",new {id = item.SupplierID})" class="btn btn-success">Edit </a>
+                    <a href="@Url.Action("Delete",new {id = item.SupplierID})" class="btn btn-danger"> Delete </a>
+                </td>
+            </tr>
+        }
+    </table>
+
+    <div>
+        @Html.ActionLink("Back to List", "Dashboard", "Home")
+    </div>
+</body>
+</html>

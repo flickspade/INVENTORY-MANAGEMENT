@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <link rel="stylesheet" href="~/CSS/style.css">
+    <!-- Boxiocns CDN Link -->
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="sidebar close">
+        <div class="logo-details">
+           <i class='bx bxs-shopping-bag-alt'></i>
+            <span class="logo_name">N.S Traders</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="~/Home/Dashboard">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="link_name">Dashboard</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Category</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bx-collection'></i>
+                        <span class="link_name">SalesOrder</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Sales Order</a></li>
+                    <li><a href="#">New Sales</a></li>
+                    <li><a href="#">Sales Info</a></li>
+                    <li><a href="#">Return Sales</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="~/Purchase/Create">
+                        <i class='bx bx-book-alt'></i>
+                        <span class="link_name">PurchaseOrder</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Purchase Order</a></li>
+                    <li><a href="~/Purchase/Create">New Purchase</a></li>
+                    <li><a href="#">Purchase Info</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bx-plug'></i>
+                        <span class="link_name">Product</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Product</a></li>
+                    <li><a href="~/Product/Product">Add Product</a></li>
+                    <li><a href="~/Product/ProductList">Product List</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bx-plug'></i>
+                        <span class="link_name">Customer</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Customer</a></li>
+                    <li><a href="~/Customer/Customer">Add Customer</a></li>
+                    <li><a href="~/Customer/CustomerList">Customer List</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bx-plug'></i>
+                        <span class="link_name">Supplier</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Supplier</a></li>
+                    <li><a href="~/Supplier/Supplier">Add Supplier</a></li>
+                    <li><a href="~/Supplier/SupplierList">Supplier List</a></li>
+                </ul>
+            </li>
+            @{ 
+//User.Identity.Name="Admin@gmail.com"
+            }
+            <li>
+                <a href="#">
+                    <i class='bx bx-cog'></i>
+                    <span class="link_name">Creditors</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Creditors</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#">
+                    <i class='bx bx-cog'></i>
+                    <span class="link_name">Creditors</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Creditors</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="profile-details">
+                    <div class="profile-content">
+                        <img src="~/Images/userImage.jpg" alt="profileImg">
+                    </div>
+                    <div class="name-job">
+                        <div class="profile_name">Ayush Sharma</div>
+                        <div class="job">Developer</div>
+                    </div>
+                    <a href="~/User/Logout">
+                        <i class='bx bx-log-out'></i>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <section class="home-section">
+        <div class="home-content">
+            <i class='bx bx-menu'></i>
+            <span class="text">Drop Down Sidebar</span>
+        </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>
+
+    </section>
+
+    <script src="~/Scripts/script.js"></script>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+
+

@@ -1,0 +1,639 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="imsdbModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="8.0" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="customer">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Adress" Type="varchar" MaxLength="80" Nullable="false" />
+          <Property Name="Contact_number" Type="int" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="80" Nullable="false" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="ProductID" />
+          </Key>
+          <Property Name="ProductID" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Sales_Price" Type="decimal" Precision="9" Scale="2" Nullable="false" />
+          <Property Name="Purchase_Price" Type="decimal" Precision="9" Scale="2" Nullable="false" />
+          <Property Name="SupplierID" Type="int" Nullable="false" />
+          <Property Name="Product Type" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Size" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="Brand" Type="varchar" MaxLength="45" Nullable="false" />
+        </EntityType>
+        <EntityType Name="product_purchase">
+          <Key>
+            <PropertyRef Name="Transaction_no" />
+          </Key>
+          <Property Name="product_id" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="purchase_id" Type="int" Nullable="false" />
+          <Property Name="Product_name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="purchase_price" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Item_Total" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Transaction_no" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="product_sales">
+          <Key>
+            <PropertyRef Name="Transaction_no" />
+          </Key>
+          <Property Name="Transaction_no" Type="int" Nullable="false" />
+          <Property Name="product_id" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="Sales_id" Type="int" Nullable="false" />
+          <Property Name="Product_Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="purchase_price" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="ItemTotal" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="purchase_order">
+          <Key>
+            <PropertyRef Name="PurchaseID" />
+          </Key>
+          <Property Name="PurchaseID" Type="int" Nullable="false" />
+          <Property Name="supplier" Type="int" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Discount" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="SubTotal" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sales_order">
+          <Key>
+            <PropertyRef Name="SaleID" />
+          </Key>
+          <Property Name="SaleID" Type="int" Nullable="false" />
+          <Property Name="customer" Type="int" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Discount" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+          <Property Name="Sub_Total" Type="decimal" Precision="6" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="supplier">
+          <Key>
+            <PropertyRef Name="SupplierID" />
+          </Key>
+          <Property Name="SupplierID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Address" Type="varchar" MaxLength="80" Nullable="false" />
+          <Property Name="Contact_number" Type="int" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="45" Nullable="false" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="User Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Password" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="First Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Last Name" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="Email" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="IsEmailVerified" Type="varchar" MaxLength="45" Nullable="false" />
+          <Property Name="ActivatorCode" Type="guid" Nullable="false" />
+        </EntityType>
+        <EntityType Name="userrole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Role" Type="varchar" MaxLength="45" Nullable="false" />
+        </EntityType>
+        <Association Name="customer1">
+          <End Role="customer" Type="Self.customer" Multiplicity="1" />
+          <End Role="sales_order" Type="Self.sales_order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="customer">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="sales_order">
+              <PropertyRef Name="customer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="product_sales_FK">
+          <End Role="product" Type="Self.product" Multiplicity="1" />
+          <End Role="product_sales" Type="Self.product_sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="ProductID" />
+            </Principal>
+            <Dependent Role="product_sales">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="proid">
+          <End Role="product" Type="Self.product" Multiplicity="1" />
+          <End Role="product_purchase" Type="Self.product_purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="ProductID" />
+            </Principal>
+            <Dependent Role="product_purchase">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="purchaseID">
+          <End Role="purchase_order" Type="Self.purchase_order" Multiplicity="1" />
+          <End Role="product_purchase" Type="Self.product_purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="purchase_order">
+              <PropertyRef Name="PurchaseID" />
+            </Principal>
+            <Dependent Role="product_purchase">
+              <PropertyRef Name="purchase_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="saleFK">
+          <End Role="sales_order" Type="Self.sales_order" Multiplicity="1" />
+          <End Role="product_sales" Type="Self.product_sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sales_order">
+              <PropertyRef Name="SaleID" />
+            </Principal>
+            <Dependent Role="product_sales">
+              <PropertyRef Name="Sales_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="supplier1">
+          <End Role="supplier" Type="Self.supplier" Multiplicity="1" />
+          <End Role="purchase_order" Type="Self.purchase_order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="purchase_order">
+              <PropertyRef Name="supplier" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SupplierID">
+          <End Role="supplier" Type="Self.supplier" Multiplicity="1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="SupplierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserId">
+          <End Role="user" Type="Self.user" Multiplicity="1" />
+          <End Role="userrole" Type="Self.userrole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="userrole">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="imsdbModelStoreContainer">
+          <EntitySet Name="customer" EntityType="Self.customer" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="product" EntityType="Self.product" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="product_purchase" EntityType="Self.product_purchase" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="product_sales" EntityType="Self.product_sales" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="purchase_order" EntityType="Self.purchase_order" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="sales_order" EntityType="Self.sales_order" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="supplier" EntityType="Self.supplier" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="user" EntityType="Self.user" Schema="imsdb" store:Type="Tables" />
+          <EntitySet Name="userrole" EntityType="Self.userrole" Schema="imsdb" store:Type="Tables" />
+          <AssociationSet Name="customer1" Association="Self.customer1">
+            <End Role="customer" EntitySet="customer" />
+            <End Role="sales_order" EntitySet="sales_order" />
+          </AssociationSet>
+          <AssociationSet Name="product_sales_FK" Association="Self.product_sales_FK">
+            <End Role="product" EntitySet="product" />
+            <End Role="product_sales" EntitySet="product_sales" />
+          </AssociationSet>
+          <AssociationSet Name="proid" Association="Self.proid">
+            <End Role="product" EntitySet="product" />
+            <End Role="product_purchase" EntitySet="product_purchase" />
+          </AssociationSet>
+          <AssociationSet Name="purchaseID" Association="Self.purchaseID">
+            <End Role="purchase_order" EntitySet="purchase_order" />
+            <End Role="product_purchase" EntitySet="product_purchase" />
+          </AssociationSet>
+          <AssociationSet Name="saleFK" Association="Self.saleFK">
+            <End Role="sales_order" EntitySet="sales_order" />
+            <End Role="product_sales" EntitySet="product_sales" />
+          </AssociationSet>
+          <AssociationSet Name="supplier1" Association="Self.supplier1">
+            <End Role="supplier" EntitySet="supplier" />
+            <End Role="purchase_order" EntitySet="purchase_order" />
+          </AssociationSet>
+          <AssociationSet Name="SupplierID" Association="Self.SupplierID">
+            <End Role="supplier" EntitySet="supplier" />
+            <End Role="product" EntitySet="product" />
+          </AssociationSet>
+          <AssociationSet Name="UserId" Association="Self.UserId">
+            <End Role="user" EntitySet="user" />
+            <End Role="userrole" EntitySet="userrole" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="imsdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="customer">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Adress" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Contact_number" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="sales_order" Relationship="Self.customer1" FromRole="customer" ToRole="sales_order" />
+        </EntityType>
+        <EntityType Name="product">
+          <Key>
+            <PropertyRef Name="ProductID" />
+          </Key>
+          <Property Name="ProductID" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Sales_Price" Type="Decimal" Nullable="false" />
+          <Property Name="Purchase_Price" Type="Decimal" Nullable="false" />
+          <Property Name="SupplierID" Type="Int32" Nullable="false" />
+          <Property Name="Product_Type" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Size" Type="String" MaxLength="3" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Brand" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="product_sales" Relationship="Self.product_sales_FK" FromRole="product" ToRole="product_sales" />
+          <NavigationProperty Name="product_purchase" Relationship="Self.proid" FromRole="product" ToRole="product_purchase" />
+          <NavigationProperty Name="supplier" Relationship="Self.SupplierID" FromRole="product" ToRole="supplier" />
+        </EntityType>
+        <EntityType Name="product_purchase">
+          <Key>
+            <PropertyRef Name="Transaction_no" />
+          </Key>
+          <Property Name="product_id" Type="String" MaxLength="10" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="purchase_id" Type="Int32" Nullable="false" />
+          <Property Name="Product_name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="purchase_price" Type="Decimal" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Item_Total" Type="Decimal" Nullable="false" />
+          <Property Name="Transaction_no" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="product" Relationship="Self.proid" FromRole="product_purchase" ToRole="product" />
+          <NavigationProperty Name="purchase_order" Relationship="Self.purchaseID" FromRole="product_purchase" ToRole="purchase_order" />
+        </EntityType>
+        <EntityType Name="product_sales">
+          <Key>
+            <PropertyRef Name="Transaction_no" />
+          </Key>
+          <Property Name="Transaction_no" Type="Int32" Nullable="false" />
+          <Property Name="product_id" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Sales_id" Type="Int32" Nullable="false" />
+          <Property Name="Product_Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="purchase_price" Type="Decimal" Nullable="false" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="ItemTotal" Type="Decimal" Nullable="false" />
+          <NavigationProperty Name="product" Relationship="Self.product_sales_FK" FromRole="product_sales" ToRole="product" />
+          <NavigationProperty Name="sales_order" Relationship="Self.saleFK" FromRole="product_sales" ToRole="sales_order" />
+        </EntityType>
+        <EntityType Name="purchase_order">
+          <Key>
+            <PropertyRef Name="PurchaseID" />
+          </Key>
+          <Property Name="PurchaseID" Type="Int32" Nullable="false" />
+          <Property Name="supplier" Type="Int32" Nullable="false" />
+          <Property Name="Total" Type="Decimal" Nullable="false" />
+          <Property Name="Discount" Type="Decimal" Nullable="false" />
+          <Property Name="SubTotal" Type="Decimal" Nullable="false" />
+          <NavigationProperty Name="product_purchase" Relationship="Self.purchaseID" FromRole="purchase_order" ToRole="product_purchase" />
+          <NavigationProperty Name="supplier1" Relationship="Self.supplier1" FromRole="purchase_order" ToRole="supplier" />
+        </EntityType>
+        <EntityType Name="sales_order">
+          <Key>
+            <PropertyRef Name="SaleID" />
+          </Key>
+          <Property Name="SaleID" Type="Int32" Nullable="false" />
+          <Property Name="customer" Type="Int32" Nullable="false" />
+          <Property Name="Total" Type="Decimal" Nullable="false" />
+          <Property Name="Discount" Type="Decimal" Nullable="false" />
+          <Property Name="Sub_Total" Type="Decimal" Nullable="false" />
+          <NavigationProperty Name="customer1" Relationship="Self.customer1" FromRole="sales_order" ToRole="customer" />
+          <NavigationProperty Name="product_sales" Relationship="Self.saleFK" FromRole="sales_order" ToRole="product_sales" />
+        </EntityType>
+        <EntityType Name="supplier">
+          <Key>
+            <PropertyRef Name="SupplierID" />
+          </Key>
+          <Property Name="SupplierID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Address" Type="String" MaxLength="80" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Contact_number" Type="Int32" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="products" Relationship="Self.SupplierID" FromRole="supplier" ToRole="product" />
+          <NavigationProperty Name="purchase_order" Relationship="Self.supplier1" FromRole="supplier" ToRole="purchase_order" />
+        </EntityType>
+        <EntityType Name="user">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="User_Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Password" Type="String" MaxLength="64" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="First_Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Last_Name" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Email" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="IsEmailVerified" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ActivatorCode" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="userroles" Relationship="Self.UserId" FromRole="user" ToRole="userrole" />
+        </EntityType>
+        <EntityType Name="userrole">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Role" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <NavigationProperty Name="user" Relationship="Self.UserId" FromRole="userrole" ToRole="user" />
+        </EntityType>
+        <Association Name="customer1">
+          <End Role="customer" Type="Self.customer" Multiplicity="1" />
+          <End Role="sales_order" Type="Self.sales_order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="customer">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="sales_order">
+              <PropertyRef Name="customer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="product_sales_FK">
+          <End Role="product" Type="Self.product" Multiplicity="1" />
+          <End Role="product_sales" Type="Self.product_sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="ProductID" />
+            </Principal>
+            <Dependent Role="product_sales">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="proid">
+          <End Role="product" Type="Self.product" Multiplicity="1" />
+          <End Role="product_purchase" Type="Self.product_purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="product">
+              <PropertyRef Name="ProductID" />
+            </Principal>
+            <Dependent Role="product_purchase">
+              <PropertyRef Name="product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="SupplierID">
+          <End Role="supplier" Type="Self.supplier" Multiplicity="1" />
+          <End Role="product" Type="Self.product" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="product">
+              <PropertyRef Name="SupplierID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="purchaseID">
+          <End Role="purchase_order" Type="Self.purchase_order" Multiplicity="1" />
+          <End Role="product_purchase" Type="Self.product_purchase" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="purchase_order">
+              <PropertyRef Name="PurchaseID" />
+            </Principal>
+            <Dependent Role="product_purchase">
+              <PropertyRef Name="purchase_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="saleFK">
+          <End Role="sales_order" Type="Self.sales_order" Multiplicity="1" />
+          <End Role="product_sales" Type="Self.product_sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="sales_order">
+              <PropertyRef Name="SaleID" />
+            </Principal>
+            <Dependent Role="product_sales">
+              <PropertyRef Name="Sales_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="supplier1">
+          <End Role="supplier" Type="Self.supplier" Multiplicity="1" />
+          <End Role="purchase_order" Type="Self.purchase_order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="supplier">
+              <PropertyRef Name="SupplierID" />
+            </Principal>
+            <Dependent Role="purchase_order">
+              <PropertyRef Name="supplier" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserId">
+          <End Role="user" Type="Self.user" Multiplicity="1" />
+          <End Role="userrole" Type="Self.userrole" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="user">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="userrole">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="imsdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="customers" EntityType="Self.customer" />
+          <EntitySet Name="products" EntityType="Self.product" />
+          <EntitySet Name="product_purchase" EntityType="Self.product_purchase" />
+          <EntitySet Name="product_sales" EntityType="Self.product_sales" />
+          <EntitySet Name="purchase_order" EntityType="Self.purchase_order" />
+          <EntitySet Name="sales_order" EntityType="Self.sales_order" />
+          <EntitySet Name="suppliers" EntityType="Self.supplier" />
+          <EntitySet Name="users" EntityType="Self.user" />
+          <EntitySet Name="userroles" EntityType="Self.userrole" />
+          <AssociationSet Name="customer1" Association="Self.customer1">
+            <End Role="customer" EntitySet="customers" />
+            <End Role="sales_order" EntitySet="sales_order" />
+          </AssociationSet>
+          <AssociationSet Name="product_sales_FK" Association="Self.product_sales_FK">
+            <End Role="product" EntitySet="products" />
+            <End Role="product_sales" EntitySet="product_sales" />
+          </AssociationSet>
+          <AssociationSet Name="proid" Association="Self.proid">
+            <End Role="product" EntitySet="products" />
+            <End Role="product_purchase" EntitySet="product_purchase" />
+          </AssociationSet>
+          <AssociationSet Name="SupplierID" Association="Self.SupplierID">
+            <End Role="supplier" EntitySet="suppliers" />
+            <End Role="product" EntitySet="products" />
+          </AssociationSet>
+          <AssociationSet Name="purchaseID" Association="Self.purchaseID">
+            <End Role="purchase_order" EntitySet="purchase_order" />
+            <End Role="product_purchase" EntitySet="product_purchase" />
+          </AssociationSet>
+          <AssociationSet Name="saleFK" Association="Self.saleFK">
+            <End Role="sales_order" EntitySet="sales_order" />
+            <End Role="product_sales" EntitySet="product_sales" />
+          </AssociationSet>
+          <AssociationSet Name="supplier1" Association="Self.supplier1">
+            <End Role="supplier" EntitySet="suppliers" />
+            <End Role="purchase_order" EntitySet="purchase_order" />
+          </AssociationSet>
+          <AssociationSet Name="UserId" Association="Self.UserId">
+            <End Role="user" EntitySet="users" />
+            <End Role="userrole" EntitySet="userroles" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="imsdbModelStoreContainer" CdmEntityContainer="imsdbEntities">
+          <EntitySetMapping Name="customers">
+            <EntityTypeMapping TypeName="imsdbModel.customer">
+              <MappingFragment StoreEntitySet="customer">
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Adress" ColumnName="Adress" />
+                <ScalarProperty Name="Contact_number" ColumnName="Contact_number" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="products">
+            <EntityTypeMapping TypeName="imsdbModel.product">
+              <MappingFragment StoreEntitySet="product">
+                <ScalarProperty Name="ProductID" ColumnName="ProductID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Sales_Price" ColumnName="Sales_Price" />
+                <ScalarProperty Name="Purchase_Price" ColumnName="Purchase_Price" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+                <ScalarProperty Name="Product_Type" ColumnName="Product Type" />
+                <ScalarProperty Name="Size" ColumnName="Size" />
+                <ScalarProperty Name="Brand" ColumnName="Brand" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="product_purchase">
+            <EntityTypeMapping TypeName="imsdbModel.product_purchase">
+              <MappingFragment StoreEntitySet="product_purchase">
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="purchase_id" ColumnName="purchase_id" />
+                <ScalarProperty Name="Product_name" ColumnName="Product_name" />
+                <ScalarProperty Name="purchase_price" ColumnName="purchase_price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Item_Total" ColumnName="Item_Total" />
+                <ScalarProperty Name="Transaction_no" ColumnName="Transaction_no" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="product_sales">
+            <EntityTypeMapping TypeName="imsdbModel.product_sales">
+              <MappingFragment StoreEntitySet="product_sales">
+                <ScalarProperty Name="Transaction_no" ColumnName="Transaction_no" />
+                <ScalarProperty Name="product_id" ColumnName="product_id" />
+                <ScalarProperty Name="Sales_id" ColumnName="Sales_id" />
+                <ScalarProperty Name="Product_Name" ColumnName="Product_Name" />
+                <ScalarProperty Name="purchase_price" ColumnName="purchase_price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="ItemTotal" ColumnName="ItemTotal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="purchase_order">
+            <EntityTypeMapping TypeName="imsdbModel.purchase_order">
+              <MappingFragment StoreEntitySet="purchase_order">
+                <ScalarProperty Name="PurchaseID" ColumnName="PurchaseID" />
+                <ScalarProperty Name="supplier" ColumnName="supplier" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sales_order">
+            <EntityTypeMapping TypeName="imsdbModel.sales_order">
+              <MappingFragment StoreEntitySet="sales_order">
+                <ScalarProperty Name="SaleID" ColumnName="SaleID" />
+                <ScalarProperty Name="customer" ColumnName="customer" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="Sub_Total" ColumnName="Sub_Total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="suppliers">
+            <EntityTypeMapping TypeName="imsdbModel.supplier">
+              <MappingFragment StoreEntitySet="supplier">
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="Contact_number" ColumnName="Contact_number" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="users">
+            <EntityTypeMapping TypeName="imsdbModel.user">
+              <MappingFragment StoreEntitySet="user">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="User_Name" ColumnName="User Name" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="First_Name" ColumnName="First Name" />
+                <ScalarProperty Name="Last_Name" ColumnName="Last Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="IsEmailVerified" ColumnName="IsEmailVerified" />
+                <ScalarProperty Name="ActivatorCode" ColumnName="ActivatorCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="userroles">
+            <EntityTypeMapping TypeName="imsdbModel.userrole">
+              <MappingFragment StoreEntitySet="userrole">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

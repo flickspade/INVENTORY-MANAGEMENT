@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="acfa3af810b148f4a217cfba396adaaa" Name="Diagram1" ZoomLevel="74">
+        <EntityTypeShape EntityType="imsdbModel.customer" Width="1.5" PointX="0.75" PointY="2.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.product" Width="1.5" PointX="3" PointY="4.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.product_purchase" Width="1.5" PointX="5.25" PointY="6.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.product_sales" Width="1.5" PointX="5.25" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.purchase_order" Width="1.5" PointX="3" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.sales_order" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.supplier" Width="1.5" PointX="0.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.user" Width="1.5" PointX="7.75" PointY="2.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="imsdbModel.userrole" Width="1.5" PointX="10" PointY="3" IsExpanded="true" />
+        <AssociationConnector Association="imsdbModel.customer1" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.product_sales_FK" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.proid" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.SupplierID" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.purchaseID" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.saleFK" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.supplier1" ManuallyRouted="false" />
+        <AssociationConnector Association="imsdbModel.UserId" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
