@@ -10,7 +10,6 @@ namespace FINALIMS.Models.Extended
 
         public int CustomerID { get; set; }
         public int SaleID { get; set; }
-
         public decimal Total { get; set; }
 
         public decimal Discount { get; set; }

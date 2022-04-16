@@ -199,8 +199,11 @@
     <Compile Include="Models\Extended\Invoice.cs" />
     <Compile Include="Models\Extended\product.cs" />
     <Compile Include="Models\Extended\ProductViewModel.cs" />
+    <Compile Include="Models\Extended\PurchaseOrder.cs" />
     <Compile Include="Models\Extended\PurchaseProductModel.cs" />
+    <Compile Include="Models\Extended\SaleInvoice.cs" />
     <Compile Include="Models\Extended\SaleProductModel.cs" />
+    <Compile Include="Models\Extended\SalesOrder.cs" />
     <Compile Include="Models\Extended\SaleViewModel.cs" />
     <Compile Include="Models\Extended\supplier.cs" />
     <Compile Include="Models\Extended\user.cs" />
@@ -329,6 +332,9 @@
     <Content Include="Views\Purchase\Create.cshtml" />
     <Content Include="Views\Purchase\Invoice.cshtml" />
     <Content Include="Views\Sales\Create.cshtml" />
+    <Content Include="Views\Sales\Invoice.cshtml" />
+    <Content Include="Views\Purchase\PurchaseOrderList.cshtml" />
+    <Content Include="Views\Sales\SalesOrderList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

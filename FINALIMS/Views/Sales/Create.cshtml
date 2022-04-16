@@ -30,12 +30,12 @@
         <div class="table-wrapper">
             <div class="table-title">
                 <div class="row">
-                    <div class="col-sm-offset-5"><h2>Purchase <b>Order</b></h2></div>
+                    <div class="col-sm-offset-5"><h2>Sales <b>Order</b></h2></div>
                    
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
-                        <h5><b>Supplier Name</b></h5>
+                        <h5><b>Customer Name</b></h5>
                         @Html.DropDownList("supplier", ViewBag.GetCustomersList as SelectList, "--Select Customers--", htmlAttributes: new { @id = "SupDDL", @class = "form-control" })
                         <font size="1">Or <a id="OpenNewSuppForm" href="~/Customer/Customer">Add New Customer</a></font>
                     </div>
@@ -66,7 +66,7 @@
                 <tbody>
                     <tr>
                         <td id="SNo0">1</td>
-                        <td style="display:none"><input type="hidden" autocomplete="off" class="form-control" name="SaleID" id="Proid"></td>
+                        <td style="display:none"><input type="hidden" autocomplete="off" class="form-control" name="ProductID" id="Proid"></td>
                         <td> <input type="text" class="form-control" name="Product_Type" id="newField" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"> </td>
                         <td><input type="text" autocomplete="off" class="form-control" name="CostPrice" id="TtlPrice"></td>
                         <td> <input type="text" autocomplete="off" class="form-control" name="Quantity" id="Quantity"> </td>
@@ -240,7 +240,56 @@
 
         $("#newField").autocomplete({
             source: '@Url.Action("GetProductByJquery")',
-            minLength: 1
+            minLength: 1,
+            select: function (event, ui) {
+                 $("#newField").change (function () {
+
+            //FOR PRICES QUANTITY ETC
+            $('#Quantity').val("1");
+
+            //FOR BRAND SIZE AND OTHER INFO
+            //var supID = $('#SupDDL').val();
+                     var prodName = $('#newField').val();
+                    /* alert(prodName);*/
+;                     $.get("@Url.Action("/GetAllProductsInfo")", { proId: prodName },function (data) {
+                if (data.AllData) {
+                    fillData(data.AllData);
+                    $("#newField").trigger("updatecomplete");
+                }
+                function fillData(AllData) {
+
+                    var Size = '';
+                    var brand = '';
+                    var total = '';
+                    for (var i = 0; i < AllData.length; i++) {
+
+                        Size = AllData[i].size;
+                        brand = AllData[i].Brand
+                        total = AllData[i].price;
+                        ProductID = AllData[i].prodID;
+                    }
+                    $('#Size').val(Size);
+                    $('#Brand').val(brand);
+                    $('#TtlPrice').val(total);
+                    $('#Total').val(total);
+                    $('#Proid').val(ProductID);
+                    console.log(ProductID);
+
+                    $("#Quantity").on("change", function () {
+                        totalPrice = $('#TtlPrice').val();
+                        numberofPiece = $('#Quantity').val();
+                        OrderTotal = totalPrice * numberofPiece
+
+                        $('#Total').val(OrderTotal);
+                    });
+
+                }
+
+            });
+
+
+        });
+            }
         });
         $("#SupDDL").change(function () {
             if ($("#SupDDL").val() === "") {
@@ -263,7 +312,7 @@
             var newRow = $("<tr>");
             var cols = '';
             cols += '<td id="SNo' + counter + '">' + counter + '</td>';
-            cols += '<td style="display:none"><input type="text" autocomplete="off" class="form-control" name="SaleID" id="Proid' + counter + '"> </td>';
+            cols += '<td style="display:none"><input type="text" autocomplete="off" class="form-control" name="ProductID" id="Proid' + counter + '"> </td>';
             cols += '<td> <input type="text" class="newClass form-control" name="Product_Type" id="newField1" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>';
             cols += '<td> <input type="text" autocomplete="off" class="form-control" name="CostPrice" id="TtlPrice'+counter+'"> </td>';
             cols += '<td><input type="text" autocomplete="off" class="form-control" name="Quantity" id="Quantity'+counter + '"> </td>';
@@ -283,19 +332,19 @@
                 select: function (event, ui) {
 
                     var proValue = ui.item.value;
-                    /*alert(proValue);*/
+                   /* alert(proValue);*/
                     $(this).closest("td").on("change", function () {
                         var supID = $('#SupDDL').val();
                         var prodName = proValue;
                         if (!supID) {
-                            alert("CHOOSE SUPPLIER ID");
+                            alert("CHOOSE CUSTOMER!!");
                             $("#newField1").val('');
                         } else {
                             $.ajax({
-                                url: "GetAllInfoByNameID",
-                                method: "POST",
+                                url: "GetAllProductsInfo",
+                                method: "GET",
                                 dataType: "json",
-                                data: { CusName: prodName, ProId: supID },
+                                data: { proID: prodName},
                                 success: function (response) {
                                     if (response.AllData) {
                                         fillPrice(response.AllData);
@@ -308,7 +357,7 @@
                                             Size = AllData[i].size;
                                             brand = AllData[i].Brand;
                                             salesPrice = AllData[i].price;
-                                            SaleID = AllData[i].prodID;
+                                            ProductID = AllData[i].prodID;
                                         }
                                         counter1 = counter - 1;
                                         $('#Quantity'+counter1).val("1");
@@ -316,7 +365,8 @@
                                         $('#Brand'+counter1).val(brand);
                                         $('#TtlPrice'+counter1).val(salesPrice);
                                         $('#Total' + counter1).val(salesPrice);
-                                        $('#Proid' + counter1).val(SaleID);
+                                        $('#Proid' + counter1).val(ProductID);
+                                        console.log(ProductID)
 
                                         $("#Quantity"+counter1).on("change", function () {
                                             totalPrice = $('#TtlPrice'+counter1).val();
@@ -336,7 +386,7 @@
                                     $("#OT1").val(newVal);
                                     $("#subtotal").val(newVal);
                                     $("#total").val(newVal);
-                                    alert(newVal);
+                                    /*alert(newVal);*/
 
 
                                    /* temp= newVal;*/
@@ -359,60 +409,19 @@
         });
         // Remove row when delete btn is clicked
         $("#selectedProducts").on("click", "#delete0", function (event) {
-            //var val = $(this).closest('#TtlPrice' /*+ counter1*/).val();
-            //alert(val);
+     
+            var prevValue = $("#OT1").val();
+            let $row = $(this).closest('tr');
+            var newValue = $row.find('input[name$="Total"]').val();
             $(this).closest("tr").remove();
-            $("#OT1").val(0);
+            var finalot1val = prevValue - newValue;
+            $("#OT1").val(finalot1val);
             counter -= 1
         });
 
 
         //data fetching for the first row
-        $("#newField").change (function () {
 
-            //FOR PRICES QUANTITY ETC
-            $('#Quantity').val("1");
-
-            //FOR BRAND SIZE AND OTHER INFO
-            var supID = $('#SupDDL').val();
-            var prodName = $('#newField').val();
-            $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
-                if (data.AllData) {
-                    fillData(data.AllData);
-                    $("#newField").trigger("updatecomplete");
-                }
-                function fillData(AllData) {
-
-                    var Size = '';
-                    var brand = '';
-                    var total = '';
-                    for (var i = 0; i < AllData.length; i++) {
-
-                        Size = AllData[i].size;
-                        brand = AllData[i].Brand
-                        total = AllData[i].price;
-                        ProductID = AllData[i].prodID;
-                    }
-                    $('#Size').val(Size);
-                    $('#Brand').val(brand);
-                    $('#TtlPrice').val(total);
-                    $('#Total').val(total);
-                    $('#Proid').val(ProductID);
-
-                    $("#Quantity").on("change", function () {
-                        totalPrice = $('#TtlPrice').val();
-                        numberofPiece = $('#Quantity').val();
-                        OrderTotal = totalPrice * numberofPiece
-
-                        $('#Total').val(OrderTotal);
-                    });
-
-                }
-
-            });
-
-
-        });
 
         $("#newField").on("updatecomplete", function () {
             // this will fire when #newField change event has finished updating the options.
@@ -434,9 +443,9 @@
 
         //building JSON array:
         $("body").on("click", "#CreatePO", function () {
-            //needing data type { "supplierID":"1",PurchaseID:"1","Total":"1","Discount":"smth","SubTotal":"1", "ListofProductViewModel":[
+            //needing data type { "CustomerID":"1",PurchaseID:"1","Total":"1","Discount":"smth","SubTotal":"1", "ListofProductViewModel":[
             //{Transaction_no:""}, {"PurcahseID":"1"} ....
-            var supID = $('#SupDDL').val();
+            var CusID = $('#SupDDL').val();
             var proID = $('#ProDDL').val();
             var ottl = $('#OT1').val();
             var disc = $('#distxt').val();
@@ -448,66 +457,23 @@
                 var data = {};
                 tb.find('input').each(function () {
                     data[this.name] = this.value;
-                    data["PurchaseID"] = proID;
+                    data["SaleID"] = proID;
                 });
-
+                console.log(data);
                 /*var listofProdcutViewModel = {};*/
 
                 modelData.push(data);
             });
             var modelData = {
-                SupplierID: supID,
-                PurchaseID: proID,
+                CustomerID: CusID,
+                SaleID: proID,
                 Total: ottl,
                 Discount: disc,
                 SubTotal: subTtl,
-                ListofProductViewModel: modelData
+                ListofSaleProductViewModel: modelData
 
             }
-            console.log(modelData);
             /*console.log(modelData);*/
-            /*var listofProductViewModel = [];*/
-
-            //var newData = {};
-            //newData['SupplierID'] = supID;
-            //newData['PurchaseID'] = proID;
-            //newData['Total'] = ottl;
-            //newData['Discount'] = disc;
-            //newData['SubTotal'] = subTtl;
-
-
-            //modelData.push(newData)
-
-            /*console.log(modelData);*/
-           /* console.log(JSON.stringify(modelData)) ;*/
-            //jQuery('#selectedProducts tr:not(:first)').each(function (i) {
-            //    var tb = jQuery(this);
-            //    var data = {};
-            //    var newData = {};
-            //    tb.find('input').each(function () {
-            //        data[this.name] = this.value;
-            //        newData[this.name] = this.value;
-            //    });
-            //    //for purchase info page
-            //    data['Supplier'] = supID;
-            //    data['PurchaseID'] = proID;
-
-            //    //for invoice page
-            //    newData['SupplierID'] = supID;
-            //    newData['PurchaseID'] = proID;
-            //    newData['Total'] = ottl;
-            //    newData['Discount'] = disc;
-            //    newData['SubTotal'] = subTtl;
-            //    newData['ListofProductViewModel'] = [newData[this.name] = this.value]
-
-            //    listofProductViewModel.push(data);
-            //    listofAllProducts.push(newData);
-
-            //    //how the array is made
-
-            //});
-
-            //adding up all the order total to generate Order's Total.
             Array.prototype.sum = function (prop) {
                 var total = 0
                 for (var i = 0, _len = this.length; i < _len; i++) {
@@ -515,18 +481,15 @@
                 }
                 return total
             }
-           /* console.log(listofProductViewModel.sum("Total"))*/
-            /*TotalOrderPrice = listofProductViewModel.sum("Total");*/
-           /* Send the JSON array to Controller using AJAX.*/
             $.ajax({
                 type: "POST",
-                url: "/Purchase/Create",
+                url: "/Sales/Create",
                 data: modelData,
                 success: function (modelData) {
-                    var proid = modelData.PurchaseID;
+                    var saleid = modelData.SaleID;
 
-                    var InvoiceurlAPI = '@Url.Content("~/")' + "Purchase/Invoice?billno="
-                    window.location.href = InvoiceurlAPI + proid;
+                    var InvoiceurlAPI = '@Url.Content("~/")' + "Sales/Invoice?billno="
+                    window.location.href = InvoiceurlAPI + saleid;
 
                 },
                 error: function (err) {
@@ -539,169 +502,3 @@
     </script>
 }
 
-
-@*<script src="~/plugins/jquery/jquery.js"></script>*@
-@*<script type="text/javascript">
-
-        $(function () {
-            $("#ProDDL").prop('disabled', true);
-            $("#SupDDL").change(function () {
-                $('#Quantity').val("1");
-
-                var suppID = this.value
-                $("#ProDDL").prop('disabled', false);
-                $.get("@Url.Action("/GetProductsBySupplierID")", { id: suppID }, function (data) {
-
-                    if (data.products) {
-                        fillProducts(data.products);
-                        $('select option')
-                            .filter(function () {
-                                return !this.value || $.trim(this.value).length == 0 || $.trim(this.text).length == 0;
-                            })
-                            .remove();
-                    }
-                });
-                function fillProducts(products) {
-                    $('#ProDDL').empty();
-                    var options = '';
-                    for (var i = 0; i < products.length; i++) {
-                        options += '<option value="' + products[i].ID + '">' + products[i].name + '<option>';
-                    }
-                    $('#ProDDL').append(options);
-
-                    $("#ProDDL").bind('DOMSubtreeModified', function () {
-                         var supID = $('#SupDDL').val();
-                        var prodName = $('#ProDDL :selected').text();
-
-                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
-                        if (data.amount) {
-                            fillPrice(data.amount);
-
-                        }
-                        function fillPrice(amount) {
-                            var total = '';
-                            for (var i = 0; i < amount.length; i++) {
-                                total = amount[i].price;
-                            }
-                            $('#TtlPrice').val(total);
-                            $("#Total").val(total);
-
-                            $("#Quantity").on("change", function () {
-                                totalPrice =$('#TtlPrice').val();
-                                numberofPiece = $('#Quantity').val();
-                                OrderTotal = totalPrice * numberofPiece
-
-                                $('#Total').val(OrderTotal);
-                            });
-                        }
-                        });
-
-                        var supID = $('#SupDDL').val();
-                var prodName = $('#ProDDL :selected').text();
-                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
-                    if (data.AllData) {
-                        fillData(data.AllData);
-                    }
-                    function fillData(AllData) {
-                        var productType = '';
-                        var Size = '';
-                        var brand = '';
-                        for (var i = 0; i < AllData.length; i++) {
-                            productType = AllData[i].prodType;
-                            Size = AllData[i].size;
-                            brand = AllData[i].Brand
-
-                        }
-                        $('#ProType').val(productType);
-                        $('#Size').val(Size);
-                        $('#Brand').val(brand);
-                    }
-
-
-                });
-
-                    });
-                    $("#ProDDL").change(function () {
-                        $('#Quantity').val("1");
-                        var supID = $('#SupDDL').val();
-                        var prodName = $('#ProDDL :selected').text();
-
-                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
-                            if (data.amount) {
-                                /*alert(data.amount);*/
-                                fillPrice(data.amount);
-
-                            }
-                            function fillPrice(amount) {
-                                var total = '';
-                                for (var i = 0; i < amount.length; i++) {
-                                    total = amount[i].price;
-                                }
-                                $('#TtlPrice').val(total);
-                                $("#Total").val(total);
-
-                                $("#Quantity").on("change", function () {
-                                    totalPrice = $('#TtlPrice').val();
-                                    numberofPiece = $('#Quantity').val();
-                                    OrderTotal = totalPrice * numberofPiece
-
-                                    $('#Total').val(OrderTotal);
-                                });
-                            }
-
-                        });
-
-                    });
-
-                }
-            });
-            $("#ProDDL").change(function () {
-                var supID = $('#SupDDL').val();
-                var prodName = $('#ProDDL :selected').text();
-                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
-                    if (data.AllData) {
-                        fillData(data.AllData);
-                    }
-                    function fillData(AllData) {
-                        var productType = '';
-                        var Size = '';
-                        var brand = '';
-                        for (var i = 0; i < AllData.length; i++) {
-                            productType = AllData[i].prodType;
-                            Size = AllData[i].size;
-                            brand = AllData[i].Brand
-
-                        }
-                        $('#ProType').val(productType);
-                        $('#Size').val(Size);
-                        $('#Brand').val(brand);
-                    }
-
-
-                });
-
-
-            });
-
-
-
-        });
-    </script>*@
-
-
-<!--$.ajax({
-                       type: "POST",
-                       url: "/Purchase/Invoice",
-                       data: JSON.stringify(listofAllProducts),
-                       contentType: "application/json; charset=utf-8",
-                       success: function (listobj) {-->
-@*var Invurl = '@Url.Content("~/")' + "Purchase/Invoice?ListofData=";*@
-<!--//window.location + "?ListofData=" + encodeURIComponent(JSON.stringify(listobj));
-/*window.location.href = Invurl + encodeURIComponent(JSON.stringify(listobj));*/-->
-@*window.location.href = '@Url.Content("~/Purchase/Invoice",listobj)';*@
-
-<!--},
-    error: function (err) {
-        alert("Why ")
-    }
-});-->

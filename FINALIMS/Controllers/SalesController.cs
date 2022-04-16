@@ -29,29 +29,29 @@ namespace FINALIMS.Controllers
         {
             if (ModelState.IsValid)
             {
-                purchase_order order = new purchase_order();
-                order.PurchaseID = modelData.SaleID;
-                order.supplier = modelData.CustomerID;
+                sales_order order = new sales_order();
+                order.SaleID = modelData.SaleID;
+                order.customer = modelData.CustomerID;
                 order.Total = modelData.Total;
                 order.Discount = modelData.Discount;
-                order.SubTotal = modelData.SubTotal;
-                dbObj.purchase_order.Add(order);
+                order.Sub_Total = modelData.SubTotal;
+                dbObj.sales_order.Add(order);
                 dbObj.SaveChanges();
 
 
-                int latestPurchaseID = order.PurchaseID;
-                product_purchase obj = new product_purchase();
+                int latestPurchaseID = order.SaleID;
+                product_sales obj = new product_sales();
                 //var transcationnum= Billnum(1, 999);
                 foreach (var item in modelData.ListofSaleProductViewModel)
                 {
                     obj.Transaction_no = latestPurchaseID;
                     obj.product_id = item.ProductID;
-                    obj.purchase_id = item.SaleID;
-                    obj.Product_name = item.Product_Type;
+                    obj.Sales_id = item.SaleID;
+                    obj.Product_Name = item.Product_Type;
                     obj.purchase_price = item.CostPrice;
                     obj.Quantity = item.Quantity;
-                    obj.Item_Total = item.Total;
-                    dbObj.product_purchase.Add(obj);
+                    obj.ItemTotal = item.Total;
+                    dbObj.product_sales.Add(obj);
                     dbObj.SaveChanges();
 
                 }
@@ -65,12 +65,72 @@ namespace FINALIMS.Controllers
             products = dbObj.products.Where(x => x.Name.StartsWith(term)).Select(y => y.Name).ToList();
             return Json(products, JsonRequestBehavior.AllowGet);
         }
-        public ActionResult GetAllInfoByNameID(string CusName, int ProId)
+        public ActionResult GetAllProductsInfo(string proId)
         {
-            var data = dbObj.products.Where(x => x.Name == CusName && x.SupplierID == ProId).Select(x => new { prodType = x.Product_Type, Brand = x.Brand, size = x.Size, price = x.Sales_Price, prodID = x.ProductID }).ToList();
+            var data = dbObj.products.Where(x=>x.Name ==proId).Select(x => new { prodType = x.Product_Type, Brand = x.Brand, size = x.Size, price = x.Sales_Price, prodID = x.ProductID }).ToList();
             return Json(new { AllData = data }, JsonRequestBehavior.AllowGet);
         }
 
+        public ActionResult Invoice(int billno)
+        {
+            SaleInvoice result = new SaleInvoice();
+            List<SaleInvoiceData> objItems = new List<SaleInvoiceData>();
+
+            try
+            {
+                var customerData = (from x in dbObj.sales_order where x.SaleID == billno select x).FirstOrDefault();
+                var customerList = dbObj.customers.Where(x => x.CustomerID == customerData.customer).Select(x => new { name = x.Name, address = x.Adress, contact_number = x.Contact_number, email = x.Email }).ToList().Select(y => new Models.customer { Name = y.name, Adress = y.address, Contact_number = y.contact_number, Email = y.email }).ToList();
+                ViewBag.custList = customerList;
+
+
+                result.CustomerName = customerData.customer;
+                result.Discount = customerData.Discount;
+                result.OrderTotal = customerData.Total;
+                result.SubTotal = customerData.Sub_Total;
+                result.Sale_ID = customerData.SaleID;
+
+
+
+                var OrderItems = (from x in dbObj.product_sales where x.Sales_id == customerData.SaleID select x).ToList();
+                foreach (var item in OrderItems)
+                {
+                    SaleInvoiceData obj = new SaleInvoiceData();
+                    obj.Product_Type = item.Product_Name;
+                    obj.CostPrice = item.purchase_price;
+                    obj.Quantity = item.Quantity;
+                    obj.Brand = item.Product_Name;
+                    obj.Size = item.Product_Name;
+                    obj.Total = item.ItemTotal;
+                    obj.Transaction_no = item.Transaction_no;
+
+                    objItems.Add(obj);
+
+                }
+                result.SalesInvoiceItems = objItems;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(result);
+        }
+        public ActionResult SalesOrderList()
+        {
+            List<sales_order> singleProductssale = dbObj.sales_order.ToList();
+            List<product_sales> SalesOrderList = dbObj.product_sales.ToList();
+
+            var data = from s in singleProductssale
+                       join st in SalesOrderList on s.SaleID equals st.Sales_id
+                       into table1
+                       from st in table1
+                       where st.Sales_id.Equals(s.SaleID)
+                       select new SalesOrder
+                       {
+                           SalesOrderDetail = s,
+                           ProductSalesDetail = st,
+                       };
+            return View(data);
+        }
 
     }
 }

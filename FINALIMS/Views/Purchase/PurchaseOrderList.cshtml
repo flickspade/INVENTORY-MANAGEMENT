@@ -1,12 +1,8 @@
-﻿@model IEnumerable<FINALIMS.Models.product>
+﻿@model IEnumerable<FINALIMS.Models.Extended.PurchaseOrder>
 
-@{
-    ViewBag.Title = "ProductList";
-}
-
-    <title>ProductList</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
+<title>Purchase Order List</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" rel="stylesheet" />
 <body>
     <p>
         @Html.ActionLink("Create New", "Create")
@@ -15,27 +11,29 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Name)
+                    Purchase ID
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Sales_Price)
+                    Product Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Purchase_Price)
+                    Discount Price
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Product_Type)
+                    Final Total
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Size)
+                    Product Total
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Brand)
+                    Product ID
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.supplier.Name)
+                    Quantity
                 </th>
-                <th></th>
+                <th>
+                    Total
+                </th>
             </tr>
         </thead>
 
@@ -44,30 +42,34 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Name)
+                       @item.PurchaseOrderDetail.PurchaseID
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Sales_Price)
+                        @item.ProductPurchaseDetail.Product_name
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Purchase_Price)
+                        @item.PurchaseOrderDetail.Discount
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Product_Type)
+                        @item.PurchaseOrderDetail.SubTotal
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Size)
+                        
+                        @item.PurchaseOrderDetail.Total
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Brand)
+                      @item.ProductPurchaseDetail.product_id
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.supplier.Name)
+                        @item.ProductPurchaseDetail.Quantity
                     </td>
                     <td>
+                        @item.ProductPurchaseDetail.Item_Total
+                    </td>
+                    @*<td>
                         <a href="@Url.Action("Edit",new {id = item.ProductID})" class="btn btn-success">Edit </a>
                         <a href="@Url.Action("Delete",new {id = item.ProductID})" class="btn btn-danger"> Delete </a>
-                    </td>
+                    </td>*@
                 </tr>
             }
         </tbody>
@@ -88,12 +90,11 @@
         <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
         <script type="text/javascript">
-                $(document).ready(function () {
-                    $('#dataTable').DataTable();
-                });
+            $(document).ready(function () {
+                $('#dataTable').DataTable();
+            });
         </script>
 
 
     }
 </body>
-

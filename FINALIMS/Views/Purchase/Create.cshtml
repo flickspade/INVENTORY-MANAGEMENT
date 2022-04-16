@@ -34,9 +34,7 @@
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-offset-5"><h2>Purchase <b>Order</b></h2></div>
-                    @*<div class="col-sm-4">
-                            <button type="button" id="addNewRow" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
-                        </div>*@
+                   
                 </div>
                 <div class="row">
                     <div class="col-sm-6">
@@ -50,7 +48,7 @@
                         @Html.EditorFor(model => model.PurchaseID, new { htmlAttributes = new { @class = "form-control", @id = "ProDDL", @Value = ViewBag.SuggestedNewPurchaseId, @readonly = "readonly" } })
                     </div>
 
-                    @*<input type="text" id="search" />*@
+                   
                 </div>
 
             </div>
@@ -344,18 +342,11 @@
                                     $("#subtotal").val(newVal);
                                     $("#total").val(newVal);
                                     alert(newVal);
-
-
-                                   /* temp= newVal;*/
-                                    /*var newttl = prevTotal + ttl;*/
-                                   /* alert(ttl);*/
                                 },
                                 error: function (err) {
                                     alert("The Product Selected doesn't belong to supplier. Chose a different Product.")
                                 }
                             })
-
-
                         }
                     });
 
@@ -366,10 +357,12 @@
         });
         // Remove row when delete btn is clicked
         $("#selectedProducts").on("click", "#delete0", function (event) {
-            //var val = $(this).closest('#TtlPrice' /*+ counter1*/).val();
-            //alert(val);
+            var prevValue = $("#OT1").val();
+            let $row = $(this).closest('tr');
+            var newValue = $row.find('input[name$="Total"]').val();
             $(this).closest("tr").remove();
-            $("#OT1").val(0);
+            var finalot1val = prevValue - newValue;
+            $("#OT1").val(finalot1val);
             counter -= 1
         });
 
@@ -458,8 +451,6 @@
                     data["PurchaseID"] = proID;
                 });
 
-                /*var listofProdcutViewModel = {};*/
-
                 modelData.push(data);
             });
             var modelData = {
@@ -469,51 +460,8 @@
                 Discount: disc,
                 SubTotal: subTtl,
                 ListofProductViewModel: modelData
-
             }
             console.log(modelData);
-            /*console.log(modelData);*/
-            /*var listofProductViewModel = [];*/
-
-            //var newData = {};
-            //newData['SupplierID'] = supID;
-            //newData['PurchaseID'] = proID;
-            //newData['Total'] = ottl;
-            //newData['Discount'] = disc;
-            //newData['SubTotal'] = subTtl;
-
-
-            //modelData.push(newData)
-
-            /*console.log(modelData);*/
-           /* console.log(JSON.stringify(modelData)) ;*/
-            //jQuery('#selectedProducts tr:not(:first)').each(function (i) {
-            //    var tb = jQuery(this);
-            //    var data = {};
-            //    var newData = {};
-            //    tb.find('input').each(function () {
-            //        data[this.name] = this.value;
-            //        newData[this.name] = this.value;
-            //    });
-            //    //for purchase info page
-            //    data['Supplier'] = supID;
-            //    data['PurchaseID'] = proID;
-
-            //    //for invoice page
-            //    newData['SupplierID'] = supID;
-            //    newData['PurchaseID'] = proID;
-            //    newData['Total'] = ottl;
-            //    newData['Discount'] = disc;
-            //    newData['SubTotal'] = subTtl;
-            //    newData['ListofProductViewModel'] = [newData[this.name] = this.value]
-
-            //    listofProductViewModel.push(data);
-            //    listofAllProducts.push(newData);
-
-            //    //how the array is made
-
-            //});
-
             //adding up all the order total to generate Order's Total.
             Array.prototype.sum = function (prop) {
                 var total = 0
@@ -522,8 +470,6 @@
                 }
                 return total
             }
-           /* console.log(listofProductViewModel.sum("Total"))*/
-            /*TotalOrderPrice = listofProductViewModel.sum("Total");*/
            /* Send the JSON array to Controller using AJAX.*/
             $.ajax({
                 type: "POST",
@@ -534,181 +480,12 @@
 
                     var InvoiceurlAPI = '@Url.Content("~/")' + "Purchase/Invoice?billno="
                     window.location.href = InvoiceurlAPI + proid;
-
                 },
                 error: function (err) {
                     alert("Data Fetch ERROR.")
-
                 }
             });
         });
     });
     </script>
 }
-
-
-@*<script src="~/plugins/jquery/jquery.js"></script>*@
-@*<script type="text/javascript">
-
-        $(function () {
-            $("#ProDDL").prop('disabled', true);
-            $("#SupDDL").change(function () {
-                $('#Quantity').val("1");
-
-                var suppID = this.value
-                $("#ProDDL").prop('disabled', false);
-                $.get("@Url.Action("/GetProductsBySupplierID")", { id: suppID }, function (data) {
-
-                    if (data.products) {
-                        fillProducts(data.products);
-                        $('select option')
-                            .filter(function () {
-                                return !this.value || $.trim(this.value).length == 0 || $.trim(this.text).length == 0;
-                            })
-                            .remove();
-                    }
-                });
-                function fillProducts(products) {
-                    $('#ProDDL').empty();
-                    var options = '';
-                    for (var i = 0; i < products.length; i++) {
-                        options += '<option value="' + products[i].ID + '">' + products[i].name + '<option>';
-                    }
-                    $('#ProDDL').append(options);
-
-                    $("#ProDDL").bind('DOMSubtreeModified', function () {
-                         var supID = $('#SupDDL').val();
-                        var prodName = $('#ProDDL :selected').text();
-
-                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
-                        if (data.amount) {
-                            fillPrice(data.amount);
-
-                        }
-                        function fillPrice(amount) {
-                            var total = '';
-                            for (var i = 0; i < amount.length; i++) {
-                                total = amount[i].price;
-                            }
-                            $('#TtlPrice').val(total);
-                            $("#Total").val(total);
-
-                            $("#Quantity").on("change", function () {
-                                totalPrice =$('#TtlPrice').val();
-                                numberofPiece = $('#Quantity').val();
-                                OrderTotal = totalPrice * numberofPiece
-
-                                $('#Total').val(OrderTotal);
-                            });
-                        }
-                        });
-
-                        var supID = $('#SupDDL').val();
-                var prodName = $('#ProDDL :selected').text();
-                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
-                    if (data.AllData) {
-                        fillData(data.AllData);
-                    }
-                    function fillData(AllData) {
-                        var productType = '';
-                        var Size = '';
-                        var brand = '';
-                        for (var i = 0; i < AllData.length; i++) {
-                            productType = AllData[i].prodType;
-                            Size = AllData[i].size;
-                            brand = AllData[i].Brand
-
-                        }
-                        $('#ProType').val(productType);
-                        $('#Size').val(Size);
-                        $('#Brand').val(brand);
-                    }
-
-
-                });
-
-                    });
-                    $("#ProDDL").change(function () {
-                        $('#Quantity').val("1");
-                        var supID = $('#SupDDL').val();
-                        var prodName = $('#ProDDL :selected').text();
-
-                        $.get("@Url.Action("/GetPriceByName")", { name: prodName, id: supID }, function (data) {
-                            if (data.amount) {
-                                /*alert(data.amount);*/
-                                fillPrice(data.amount);
-
-                            }
-                            function fillPrice(amount) {
-                                var total = '';
-                                for (var i = 0; i < amount.length; i++) {
-                                    total = amount[i].price;
-                                }
-                                $('#TtlPrice').val(total);
-                                $("#Total").val(total);
-
-                                $("#Quantity").on("change", function () {
-                                    totalPrice = $('#TtlPrice').val();
-                                    numberofPiece = $('#Quantity').val();
-                                    OrderTotal = totalPrice * numberofPiece
-
-                                    $('#Total').val(OrderTotal);
-                                });
-                            }
-
-                        });
-
-                    });
-
-                }
-            });
-            $("#ProDDL").change(function () {
-                var supID = $('#SupDDL').val();
-                var prodName = $('#ProDDL :selected').text();
-                $.get("@Url.Action("/GetAllInfoByNameID")", { SupName: prodName, ProId: supID }, function (data) {
-                    if (data.AllData) {
-                        fillData(data.AllData);
-                    }
-                    function fillData(AllData) {
-                        var productType = '';
-                        var Size = '';
-                        var brand = '';
-                        for (var i = 0; i < AllData.length; i++) {
-                            productType = AllData[i].prodType;
-                            Size = AllData[i].size;
-                            brand = AllData[i].Brand
-
-                        }
-                        $('#ProType').val(productType);
-                        $('#Size').val(Size);
-                        $('#Brand').val(brand);
-                    }
-
-
-                });
-
-
-            });
-
-
-
-        });
-    </script>*@
-
-
-<!--$.ajax({
-                       type: "POST",
-                       url: "/Purchase/Invoice",
-                       data: JSON.stringify(listofAllProducts),
-                       contentType: "application/json; charset=utf-8",
-                       success: function (listobj) {-->
-@*var Invurl = '@Url.Content("~/")' + "Purchase/Invoice?ListofData=";*@
-<!--//window.location + "?ListofData=" + encodeURIComponent(JSON.stringify(listobj));
-/*window.location.href = Invurl + encodeURIComponent(JSON.stringify(listobj));*/-->
-@*window.location.href = '@Url.Content("~/Purchase/Invoice",listobj)';*@
-
-<!--},
-    error: function (err) {
-        alert("Why ")
-    }
-});-->

@@ -120,6 +120,7 @@ namespace IMS.Controllers
 
 
                 var OrderItems = (from x in dbObj.product_purchase where x.purchase_id == customerData.PurchaseID select x).ToList();
+
                 foreach (var item in OrderItems)
                 {
                     InvoiceData obj = new InvoiceData();
@@ -136,11 +137,28 @@ namespace IMS.Controllers
                 }
                 result.InvoiceItems = objItems;
             }
-            catch (Exception)
+            catch (Exception )
             {
-                throw;
+                return new HttpStatusCodeResult(400, "Product Not Found! Try typing different product.");
             }
             return View(result);
+        }
+
+        public ActionResult PurchaseOrderList()
+        {
+            List <purchase_order> singleProducts = dbObj.purchase_order.ToList();
+            List<product_purchase> PurchaseOrderList = dbObj.product_purchase.ToList();
+
+            var data = from s in singleProducts
+                                join st in PurchaseOrderList on s.PurchaseID equals st.purchase_id 
+                                into table1
+                                from st in table1 where st.purchase_id.Equals(s.PurchaseID)
+                                select new PurchaseOrder
+                                {
+                                    PurchaseOrderDetail =s,
+                                   ProductPurchaseDetail=st,
+                                };
+            return View(data);
         }
     }
 }
